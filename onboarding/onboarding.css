@@ -1,0 +1,156 @@
+:root {
+  --bg: #ffffff;
+  --bg-elevated: #f4f6f5;
+  --text: #14231d;
+  --text-muted: #63756c;
+  --border: #e3e8e5;
+  --accent: #0f6a52;
+  --accent-contrast: #ffffff;
+  --error: #b3261e;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --bg: #121815;
+  --bg-elevated: #1a2320;
+  --text: #edf2ef;
+  --text-muted: #93a49c;
+  --border: #263029;
+  --accent: #37b58a;
+  --accent-contrast: #08120e;
+  --error: #ff6b60;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121815;
+    --bg-elevated: #1a2320;
+    --text: #edf2ef;
+    --text-muted: #93a49c;
+    --border: #263029;
+    --accent: #37b58a;
+    --accent-contrast: #08120e;
+    --error: #ff6b60;
+    color-scheme: dark;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+}
+
+main {
+  width: 100%;
+  max-width: 420px;
+  padding: 32px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.step {
+  text-align: center;
+}
+
+.big-icon {
+  font-size: 56px;
+}
+
+h1 {
+  font-size: 20px;
+  margin: 12px 0 4px;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin: 0 0 24px;
+}
+
+.btn-primary,
+.btn-secondary {
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+}
+.btn-primary {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  border: none;
+}
+.btn-secondary {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.option-card {
+  text-align: left;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 14px;
+}
+.option-card h2 {
+  font-size: 14px;
+  margin: 0 0 2px;
+}
+.option-card .hint {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin: 0 0 12px;
+}
+
+select {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.error-text {
+  color: var(--error);
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.confirm-check {
+  font-size: 40px;
+  color: var(--accent);
+}
+
+.confirm-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+.confirm-label {
+  color: var(--text-muted);
+}
+
+#finish-btn {
+  margin-top: 20px;
+}

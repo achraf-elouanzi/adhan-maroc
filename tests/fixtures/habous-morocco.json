@@ -1,0 +1,70 @@
+{
+  "_comment": "Golden dataset — horaires officiels du Ministère des Habous et des Affaires islamiques du Maroc, extraits de https://habous.gov.ma/prieres/index.php (tableau mensuel officiel, paramètre ?ville=<id> — les identifiants correspondent aux options du <select name=\"ville\"> de cette page). 8 entrées été (26/08/2026, consultées le 26/08/2026) + 1 entrée hiver/solstice (22/12/2024, via https://web.archive.org/web/20241222165442/https://www.habous.gov.ma/prieres/index.php, snapshot Wayback Machine du site officiel). Chaque date a été recoupée avec le jour de la semaine affiché dans le tableau (colonne 'الأيام') pour écarter toute ambiguïté de correspondance calendaire. Les horaires Dhuhr/Maghrib officiels incluent une marge de précaution ('ihtiyat') de 5 minutes que core/prayer.js reproduit désormais (voir docs/calculation.md) ; Fajr/Asr/Isha n'ont montré aucun écart au-delà de l'arrondi à la minute.",
+  "_schema": {
+    "city": "identifiant de data/cities-ma.json (ex: \"casablanca\")",
+    "date": "YYYY-MM-DD (calendrier grégorien, fuseau Africa/Casablanca)",
+    "source": "référence exacte et vérifiable de la donnée",
+    "fajr": "HH:MM",
+    "sunrise": "HH:MM",
+    "dhuhr": "HH:MM",
+    "asr": "HH:MM",
+    "maghrib": "HH:MM",
+    "isha": "HH:MM"
+  },
+  "entries": [
+    {
+      "city": "rabat",
+      "date": "2026-08-26",
+      "source": "https://habous.gov.ma/prieres/index.php?ville=1 (ville=1 = الرباط/Rabat), consulté le 26/08/2026",
+      "fajr": "05:23", "sunrise": "06:54", "dhuhr": "13:34", "asr": "17:08", "maghrib": "20:05", "isha": "21:24"
+    },
+    {
+      "city": "casablanca",
+      "date": "2026-08-26",
+      "source": "https://habous.gov.ma/prieres/index.php?ville=58 (ville=58 = الدار البيضاء/Casablanca), consulté le 26/08/2026",
+      "fajr": "05:27", "sunrise": "06:57", "dhuhr": "13:37", "asr": "17:11", "maghrib": "20:08", "isha": "21:26"
+    },
+    {
+      "city": "marrakech",
+      "date": "2026-08-26",
+      "source": "https://habous.gov.ma/prieres/index.php?ville=104 (ville=104 = مراكش/Marrakech), consulté le 26/08/2026",
+      "fajr": "05:33", "sunrise": "06:59", "dhuhr": "13:39", "asr": "17:11", "maghrib": "20:09", "isha": "21:23"
+    },
+    {
+      "city": "fes",
+      "date": "2026-08-26",
+      "source": "https://habous.gov.ma/prieres/index.php?ville=81 (ville=81 = فاس/Fès), consulté le 26/08/2026",
+      "fajr": "05:15", "sunrise": "06:45", "dhuhr": "13:27", "asr": "17:01", "maghrib": "19:59", "isha": "21:17"
+    },
+    {
+      "city": "tanger",
+      "date": "2026-08-26",
+      "source": "https://habous.gov.ma/prieres/index.php?ville=14 (ville=14 = طنجة/Tanger), consulté le 26/08/2026",
+      "fajr": "05:14", "sunrise": "06:47", "dhuhr": "13:30", "asr": "17:06", "maghrib": "20:04", "isha": "21:24"
+    },
+    {
+      "city": "agadir",
+      "date": "2026-08-26",
+      "source": "https://habous.gov.ma/prieres/index.php?ville=117 (ville=117 = أكادير/Agadir), consulté le 26/08/2026",
+      "fajr": "05:42", "sunrise": "07:08", "dhuhr": "13:45", "asr": "17:16", "maghrib": "20:13", "isha": "21:27"
+    },
+    {
+      "city": "oujda",
+      "date": "2026-08-26",
+      "source": "https://habous.gov.ma/prieres/index.php?ville=31 (ville=31 = وجدة/Oujda), consulté le 26/08/2026",
+      "fajr": "05:01", "sunrise": "06:31", "dhuhr": "13:15", "asr": "16:49", "maghrib": "19:48", "isha": "21:06"
+    },
+    {
+      "city": "safi",
+      "date": "2026-08-26",
+      "source": "https://habous.gov.ma/prieres/index.php?ville=111 (ville=111 = آسفي/Safi), consulté le 26/08/2026",
+      "fajr": "05:36", "sunrise": "07:05", "dhuhr": "13:44", "asr": "17:16", "maghrib": "20:13", "isha": "21:30"
+    },
+    {
+      "city": "rabat",
+      "date": "2024-12-22",
+      "source": "https://web.archive.org/web/20241222165442/https://www.habous.gov.ma/prieres/index.php (ville par défaut = الرباط/Rabat, snapshot Wayback Machine du 22/12/2024, solstice d'hiver — point de comparaison saisonnier)",
+      "fajr": "06:54", "sunrise": "08:26", "dhuhr": "13:31", "asr": "16:05", "maghrib": "18:27", "isha": "19:47"
+    }
+  ]
+}

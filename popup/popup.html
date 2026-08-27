@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Adhan Maroc</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div id="setup-view" class="view hidden">
+      <div class="setup">
+        <div class="setup-icon">🕌</div>
+        <p class="setup-title">Adhan Maroc</p>
+        <p class="setup-text">Configurez votre localisation pour afficher les horaires de prière.</p>
+        <button id="setup-button" class="btn-primary">Configurer</button>
+      </div>
+    </div>
+
+    <div id="main-view" class="view hidden">
+      <header>
+        <div class="brand">🕌 Adhan Maroc</div>
+        <div id="location-name" class="location"></div>
+      </header>
+
+      <div id="date-line" class="date-line"></div>
+
+      <section class="next-prayer">
+        <div class="next-label">PROCHAINE PRIÈRE</div>
+        <div id="next-name" class="next-name"></div>
+        <div id="next-time" class="next-time"></div>
+        <div id="next-countdown" class="next-countdown"></div>
+      </section>
+
+      <ul id="prayer-list" class="prayer-list"></ul>
+
+      <footer>
+        <button id="notif-toggle" class="icon-btn" title="Notifications" aria-label="Basculer les notifications">🔔</button>
+        <button id="options-btn" class="icon-btn" title="Paramètres" aria-label="Ouvrir les paramètres">⚙️</button>
+      </footer>
+    </div>
+
+    <script src="../shared/theme.js"></script>
+    <script src="../core/timezone.js"></script>
+    <script src="../core/storage.js"></script>
+    <script src="../vendor/adhan.umd.min.js"></script>
+    <script src="../core/prayer.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

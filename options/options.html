@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Paramètres — Adhan Maroc</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <main>
+      <h1>🕌 Adhan Maroc — Paramètres</h1>
+
+      <section class="card">
+        <h2>Localisation</h2>
+        <div id="location-current" class="current-value"></div>
+        <button id="edit-location-btn" class="btn-secondary">Modifier</button>
+
+        <div id="location-editor" class="location-editor hidden">
+          <label class="field">
+            <span>Choisir une ville</span>
+            <select id="city-select"></select>
+          </label>
+          <div class="editor-actions">
+            <button id="use-city-btn" class="btn-primary">Utiliser cette ville</button>
+            <button id="use-geo-btn" class="btn-secondary">Utiliser ma position</button>
+          </div>
+          <p id="location-error" class="error-text hidden"></p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Notifications</h2>
+        <label class="switch-row">
+          <span>Notifications de prière</span>
+          <input type="checkbox" id="notifications-toggle" />
+        </label>
+      </section>
+
+      <section class="card">
+        <h2>Adhan</h2>
+        <label class="switch-row">
+          <span>Jouer l'Adhan</span>
+          <input type="checkbox" id="adhan-toggle" />
+        </label>
+      </section>
+
+      <section class="card">
+        <h2>Format horaire</h2>
+        <label class="radio-row"><input type="radio" name="time-format" value="24h" /> 24h</label>
+        <label class="radio-row"><input type="radio" name="time-format" value="12h" /> 12h</label>
+      </section>
+
+      <section class="card">
+        <h2>Thème</h2>
+        <label class="radio-row"><input type="radio" name="theme" value="system" /> Système</label>
+        <label class="radio-row"><input type="radio" name="theme" value="light" /> Clair</label>
+        <label class="radio-row"><input type="radio" name="theme" value="dark" /> Sombre</label>
+      </section>
+
+      <section class="card">
+        <h2>Méthode de calcul</h2>
+        <div class="method-value">🇲🇦 Maroc — Habous</div>
+        <div class="method-sub">École malikite (non modifiable)</div>
+      </section>
+
+      <div id="version-line" class="version-line"></div>
+    </main>
+
+    <script src="../shared/theme.js"></script>
+    <script src="../core/timezone.js"></script>
+    <script src="../core/storage.js"></script>
+    <script src="../core/location.js"></script>
+    <script src="options.js"></script>
+  </body>
+</html>

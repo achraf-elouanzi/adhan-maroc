@@ -1,0 +1,25 @@
+{
+  "timezone": "Africa/Casablanca",
+  "cities": [
+    { "id": "casablanca", "name": "Casablanca", "latitude": 33.5731, "longitude": -7.5898 },
+    { "id": "rabat", "name": "Rabat", "latitude": 34.0209, "longitude": -6.8416 },
+    { "id": "fes", "name": "Fès", "latitude": 34.0331, "longitude": -5.0003 },
+    { "id": "marrakech", "name": "Marrakech", "latitude": 31.6295, "longitude": -7.9811 },
+    { "id": "tanger", "name": "Tanger", "latitude": 35.7595, "longitude": -5.8340 },
+    { "id": "agadir", "name": "Agadir", "latitude": 30.4278, "longitude": -9.5981 },
+    { "id": "meknes", "name": "Meknès", "latitude": 33.8935, "longitude": -5.5473 },
+    { "id": "oujda", "name": "Oujda", "latitude": 34.6805, "longitude": -1.9086 },
+    { "id": "tetouan", "name": "Tétouan", "latitude": 35.5785, "longitude": -5.3684 },
+    { "id": "safi", "name": "Safi", "latitude": 32.2994, "longitude": -9.2372 },
+    { "id": "eljadida", "name": "El Jadida", "latitude": 33.2316, "longitude": -8.5007 },
+    { "id": "nador", "name": "Nador", "latitude": 35.1681, "longitude": -2.9287 },
+    { "id": "benimellal", "name": "Béni Mellal", "latitude": 32.3373, "longitude": -6.3498 },
+    { "id": "kenitra", "name": "Kenitra", "latitude": 34.2610, "longitude": -6.5802 },
+    { "id": "mohammedia", "name": "Mohammedia", "latitude": 33.6863, "longitude": -7.3830 },
+    { "id": "settat", "name": "Settat", "latitude": 33.0010, "longitude": -7.6166 },
+    { "id": "essaouira", "name": "Essaouira", "latitude": 31.5085, "longitude": -9.7595 },
+    { "id": "ouarzazate", "name": "Ouarzazate", "latitude": 30.9189, "longitude": -6.8934 },
+    { "id": "laayoune", "name": "Laâyoune", "latitude": 27.1418, "longitude": -13.1873 },
+    { "id": "dakhla", "name": "Dakhla", "latitude": 23.6848, "longitude": -15.9570 }
+  ]
+}

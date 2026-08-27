@@ -1,0 +1,54 @@
+{
+  "manifest_version": 3,
+  "name": "Adhan Maroc",
+  "version": "1.0.0",
+  "description": "Horaires de prière au Maroc, rappels et Adhan — 100% local, sans serveur.",
+  "author": "Adhan Maroc",
+  "icons": {
+    "16": "icons/icon.svg",
+    "32": "icons/icon.svg",
+    "48": "icons/icon.svg",
+    "128": "icons/icon.svg"
+  },
+  "background": {
+    "scripts": [
+      "vendor/adhan.umd.min.js",
+      "core/timezone.js",
+      "core/storage.js",
+      "core/prayer.js",
+      "core/location.js",
+      "core/scheduler.js",
+      "core/notification.js",
+      "background/background.js"
+    ]
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon.svg",
+      "32": "icons/icon.svg"
+    },
+    "default_title": "Adhan Maroc"
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+  "permissions": [
+    "alarms",
+    "notifications",
+    "storage"
+  ],
+  "optional_permissions": [
+    "geolocation"
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "adhan-maroc@local.extension",
+      "strict_min_version": "142.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  }
+}

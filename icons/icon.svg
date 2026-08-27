@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <rect width="128" height="128" rx="24" fill="#0f6a52"/>
+
+  <!-- minaret carré (style maghrébin — Koutoubia, Hassan II), pas de dôme bulbeux -->
+
+  <!-- corps principal -->
+  <rect x="49" y="52" width="30" height="56" fill="#f6f1e4"/>
+  <!-- porte en arc outrepassé (horseshoe arch) -->
+  <path d="M58 108 V88 a6 6 0 0 1 12 0 V108 Z" fill="#0f6a52"/>
+  <!-- bandeau de séparation -->
+  <rect x="49" y="50" width="30" height="3" fill="#d8cfae"/>
+
+  <!-- lanterne (second niveau, plus étroit) -->
+  <rect x="55" y="36" width="18" height="15" fill="#f6f1e4"/>
+  <rect x="55" y="34" width="18" height="3" fill="#d8cfae"/>
+
+  <!-- toit pyramidal en tuiles vertes -->
+  <path d="M52 36 L64 19 L76 36 Z" fill="#1f8c63"/>
+  <path d="M52 36 L64 19 L64 36 Z" fill="#279a6e"/>
+
+  <!-- flèche et globes (jamour) -->
+  <rect x="63" y="7" width="2" height="13" fill="#e3b34d"/>
+  <circle cx="64" cy="16" r="3" fill="#e3b34d"/>
+  <circle cx="64" cy="10.5" r="2.1" fill="#e3b34d"/>
+  <circle cx="64" cy="6.5" r="1.4" fill="#e3b34d"/>
+</svg>

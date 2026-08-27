@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Bienvenue — Adhan Maroc</title>
+    <link rel="stylesheet" href="onboarding.css" />
+  </head>
+  <body>
+    <main>
+      <section id="step-1" class="step">
+        <div class="big-icon">🕌</div>
+        <h1>Adhan Maroc</h1>
+        <p class="subtitle">Les horaires de prière directement dans Firefox.</p>
+        <button id="start-btn" class="btn-primary">Commencer</button>
+      </section>
+
+      <section id="step-2" class="step hidden">
+        <h1>Localisation</h1>
+        <p class="subtitle">Choisissez comment déterminer vos horaires de prière.</p>
+
+        <div class="option-card">
+          <h2>Choisir une ville</h2>
+          <p class="hint">Solution simple, recommandée.</p>
+          <select id="city-select"></select>
+          <button id="use-city-btn" class="btn-primary">Utiliser cette ville</button>
+        </div>
+
+        <div class="option-card">
+          <h2>Utiliser ma position</h2>
+          <p class="hint">Géolocalisation locale, jamais envoyée à un serveur.</p>
+          <button id="use-geo-btn" class="btn-secondary">Utiliser ma position</button>
+        </div>
+
+        <p id="location-error" class="error-text hidden"></p>
+      </section>
+
+      <section id="step-3" class="step hidden">
+        <div class="confirm-check">✓</div>
+        <h1 id="confirm-city"></h1>
+        <div class="confirm-row">
+          <span class="confirm-label">Méthode</span>
+          <span>🇲🇦 Maroc — Habous</span>
+        </div>
+        <div class="confirm-row">
+          <span class="confirm-label">École</span>
+          <span>Malikite</span>
+        </div>
+        <button id="finish-btn" class="btn-primary">Terminer</button>
+      </section>
+    </main>
+
+    <script src="../shared/theme.js"></script>
+    <script src="../core/timezone.js"></script>
+    <script src="../core/storage.js"></script>
+    <script src="../core/location.js"></script>
+    <script src="onboarding.js"></script>
+  </body>
+</html>
