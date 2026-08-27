@@ -38,6 +38,12 @@ const MAGHRIB_ADJUSTMENT_MINUTES = 5;
 
 const PRAYER_ORDER = ["fajr", "dhuhr", "asr", "maghrib", "isha"];
 
+// Durée pendant laquelle une prière qui vient de sonner est affichée comme
+// "en cours" avant que l'interface ne bascule sur le compte à rebours de
+// la prière suivante (demandé explicitement : ne pas passer instantanément
+// à la prière suivante à l'heure pile).
+const ONGOING_WINDOW_MINUTES = 15;
+
 const isNode = typeof module !== "undefined" && !!module.exports;
 
 function getAdhan() {
@@ -149,25 +155,54 @@ function findCurrentPrayer(todayPrayerDay, now) {
   return current;
 }
 
+/**
+ * État à afficher dans l'interface : soit une prière vient de sonner et
+ * est encore "en cours" (moins de ONGOING_WINDOW_MINUTES se sont écoulées
+ * depuis son heure), soit on affiche normalement la prochaine prière.
+ *
+ * Retourne :
+ *   { mode: "ongoing", key, startedAt, endsAt }
+ *   { mode: "next", key, time, isTomorrow }
+ *   null (cas normalement impossible : aucune prière à afficher)
+ */
+function findDisplayState(todayPrayerDay, tomorrowPrayerDay, now, windowMinutes = ONGOING_WINDOW_MINUTES) {
+  const currentKey = findCurrentPrayer(todayPrayerDay, now);
+
+  if (currentKey) {
+    const startedAt = todayPrayerDay[currentKey];
+    const endsAt = new Date(startedAt.getTime() + windowMinutes * 60000);
+    if (now.getTime() < endsAt.getTime()) {
+      return { mode: "ongoing", key: currentKey, startedAt, endsAt };
+    }
+  }
+
+  const next = findNextPrayer(todayPrayerDay, tomorrowPrayerDay, now);
+  return next ? { mode: "next", ...next } : null;
+}
+
 if (typeof module !== "undefined" && module.exports) {
   module.exports = {
     FAJR_ANGLE,
     ISHA_ANGLE,
+    ONGOING_WINDOW_MINUTES,
     PRAYER_ORDER,
     computeRawDay,
     computeDay,
     findNextPrayer,
     findCurrentPrayer,
+    findDisplayState,
   };
 } else {
   self.PRPrayer = {
     FAJR_ANGLE,
     ISHA_ANGLE,
+    ONGOING_WINDOW_MINUTES,
     PRAYER_ORDER,
     computeRawDay,
     computeDay,
     findNextPrayer,
     findCurrentPrayer,
+    findDisplayState,
   };
 }
 

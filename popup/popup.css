@@ -7,6 +7,7 @@
   --accent: #0f6a52;
   --accent-contrast: #ffffff;
   --passed: #9aa79f;
+  --ongoing: #b3791a;
   color-scheme: light;
 }
 
@@ -19,6 +20,7 @@
   --accent: #37b58a;
   --accent-contrast: #08120e;
   --passed: #576259;
+  --ongoing: #e3b34d;
   color-scheme: dark;
 }
 
@@ -33,6 +35,7 @@
     --accent-contrast: #08120e;
     --passed: #576259;
     color-scheme: dark;
+    --ongoing: #e3b34d;
   }
 }
 
@@ -139,6 +142,12 @@ header {
   margin-top: 4px;
 }
 
+.next-prayer.ongoing .next-label,
+.next-prayer.ongoing .next-name,
+.next-prayer.ongoing .next-countdown {
+  color: var(--ongoing);
+}
+
 .prayer-list {
   list-style: none;
   margin: 4px 16px 8px;
@@ -168,6 +177,11 @@ header {
 .prayer-list li.next .name,
 .prayer-list li.next .time {
   color: var(--accent);
+  font-weight: 700;
+}
+.prayer-list li.ongoing .name,
+.prayer-list li.ongoing .time {
+  color: var(--ongoing);
   font-weight: 700;
 }
 .mark {

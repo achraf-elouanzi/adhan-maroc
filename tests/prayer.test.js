@@ -96,6 +96,60 @@ test("findCurrentPrayer : null avant Fajr, dernière prière passée sinon", () 
   assert.equal(prayer.findCurrentPrayer(day, new Date(day.isha.getTime() + 60_000)), "isha");
 });
 
+test("findDisplayState : une prière qui vient de sonner reste \"en cours\" pendant ONGOING_WINDOW_MINUTES", () => {
+  const today = prayer.computeDay(CASABLANCA.latitude, CASABLANCA.longitude, refDate(2026, 6, 21), TIMEZONE);
+
+  const justAfter = new Date(today.dhuhr.getTime() + 5 * 60_000);
+  const state = prayer.findDisplayState(today, null, justAfter);
+  assert.equal(state.mode, "ongoing");
+  assert.equal(state.key, "dhuhr");
+  assert.equal(state.startedAt.getTime(), today.dhuhr.getTime());
+  assert.equal(state.endsAt.getTime(), today.dhuhr.getTime() + prayer.ONGOING_WINDOW_MINUTES * 60_000);
+});
+
+test("findDisplayState : bascule sur la prière suivante une fois la fenêtre \"en cours\" écoulée", () => {
+  const today = prayer.computeDay(CASABLANCA.latitude, CASABLANCA.longitude, refDate(2026, 6, 21), TIMEZONE);
+  const tomorrowRef = tz.addDays(refDate(2026, 6, 21), 1, TIMEZONE);
+  const tomorrow = prayer.computeDay(CASABLANCA.latitude, CASABLANCA.longitude, tomorrowRef, TIMEZONE);
+
+  const windowMs = prayer.ONGOING_WINDOW_MINUTES * 60_000;
+
+  // Juste avant la fin de la fenêtre : toujours "en cours".
+  const stillOngoing = prayer.findDisplayState(today, tomorrow, new Date(today.dhuhr.getTime() + windowMs - 1000));
+  assert.equal(stillOngoing.mode, "ongoing");
+  assert.equal(stillOngoing.key, "dhuhr");
+
+  // Exactement à la fin de la fenêtre : bascule sur la prière suivante.
+  const justAfter = prayer.findDisplayState(today, tomorrow, new Date(today.dhuhr.getTime() + windowMs));
+  assert.equal(justAfter.mode, "next");
+  assert.equal(justAfter.key, "asr");
+});
+
+test("findDisplayState : Isha reste \"en cours\" (pas de bascule instantanée vers Fajr demain)", () => {
+  const today = prayer.computeDay(CASABLANCA.latitude, CASABLANCA.longitude, refDate(2026, 6, 21), TIMEZONE);
+  const tomorrowRef = tz.addDays(refDate(2026, 6, 21), 1, TIMEZONE);
+  const tomorrow = prayer.computeDay(CASABLANCA.latitude, CASABLANCA.longitude, tomorrowRef, TIMEZONE);
+
+  const justAfterIsha = new Date(today.isha.getTime() + 5 * 60_000);
+  const state = prayer.findDisplayState(today, tomorrow, justAfterIsha);
+  assert.equal(state.mode, "ongoing");
+  assert.equal(state.key, "isha");
+
+  const longAfterIsha = new Date(today.isha.getTime() + 30 * 60_000);
+  const later = prayer.findDisplayState(today, tomorrow, longAfterIsha);
+  assert.equal(later.mode, "next");
+  assert.equal(later.key, "fajr");
+  assert.equal(later.isTomorrow, true);
+});
+
+test("findDisplayState : avant Fajr, affiche directement Fajr comme prochaine prière (pas de fenêtre \"en cours\")", () => {
+  const today = prayer.computeDay(CASABLANCA.latitude, CASABLANCA.longitude, refDate(2026, 6, 21), TIMEZONE);
+  const beforeFajr = new Date(today.fajr.getTime() - 10 * 60_000);
+  const state = prayer.findDisplayState(today, null, beforeFajr);
+  assert.equal(state.mode, "next");
+  assert.equal(state.key, "fajr");
+});
+
 test("changement de jour : addDays avance d'exactement un jour calendaire à Casablanca", () => {
   const today = refDate(2026, 6, 21);
   const tomorrow = tz.addDays(today, 1, TIMEZONE);
