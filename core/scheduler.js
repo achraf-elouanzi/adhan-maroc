@@ -118,7 +118,13 @@ async function reconcile() {
   await updateBadge();
 }
 
-/** Met à jour le badge à partir d'un recalcul frais (pas de cache). */
+/**
+ * Met à jour le badge à partir d'un recalcul frais (pas de cache).
+ * Respecte la même fenêtre "en cours" (ONGOING_WINDOW_MINUTES) que le
+ * popup : si une prière vient de sonner, le badge affiche le temps
+ * restant de cette fenêtre plutôt que de sauter directement au compte à
+ * rebours de la prière suivante.
+ */
 async function updateBadge() {
   const config = await storageModule().getConfig();
   if (!config.location) {
@@ -129,15 +135,27 @@ async function updateBadge() {
   const now = new Date();
   const { today, tomorrow } = computeDays(config, now);
   const prayer = prayerModule();
-  const next = prayer.findNextPrayer(today, tomorrow, now);
+  const state = prayer.findDisplayState(today, tomorrow, now);
 
-  if (!next) {
+  if (!state) {
     await clearBadge();
     return;
   }
 
-  const minutesRemaining = (next.time.getTime() - now.getTime()) / 60000;
+  const targetTime = state.mode === "ongoing" ? state.endsAt : state.time;
+  const minutesRemaining = (targetTime.getTime() - now.getTime()) / 60000;
   await browser.action.setBadgeText({ text: formatBadge(minutesRemaining) });
+}
+
+/** Horaire réel d'une prière donnée, à partir de sa clé de jour ("YYYY-MM-DD"). */
+function scheduledTimeForAlarm(dayKey, prayerKey, config) {
+  const tz = tzModule();
+  const prayer = prayerModule();
+  const [year, month, day] = dayKey.split("-").map(Number);
+  const referenceDate = tz.noonDateForDay(year, month, day);
+  const { latitude, longitude, timezone } = config.location;
+  const computedDay = prayer.computeDay(latitude, longitude, referenceDate, timezone);
+  return computedDay[prayerKey];
 }
 
 /**
@@ -146,6 +164,15 @@ async function updateBadge() {
  * aveuglément au nom de l'alarme (protège contre une alarme en retard
  * après une veille prolongée ou un changement d'heure système), déclenche
  * les effets une seule fois par prière/jour, puis reprogramme la suite.
+ *
+ * Si le PC s'est réveillé longtemps après l'heure théorique de la
+ * prière (plus de ONGOING_WINDOW_MINUTES de retard — typiquement après
+ * une veille prolongée traversant plusieurs prières, où Firefox relivre
+ * toutes les alarmes en retard d'un coup), la notification n'est PAS
+ * affichée pour cette prière manquée : on ne notifie que pour une prière
+ * encore "d'actualité". L'état est quand même marqué comme traité pour
+ * ne jamais redéclencher, et reconcile() reprogramme normalement la
+ * suite.
  */
 async function handlePrayerAlarm(alarmName) {
   const [, dayKey, prayerKey] = alarmName.split(":");
@@ -158,7 +185,11 @@ async function handlePrayerAlarm(alarmName) {
 
   const config = await storageModule().getConfig();
   if (config.location) {
-    await notificationModule().firePrayerEffects(prayerKey, dayKey, config);
+    const scheduledTime = scheduledTimeForAlarm(dayKey, prayerKey, config);
+    const lateMinutes = (Date.now() - scheduledTime.getTime()) / 60000;
+    if (lateMinutes <= prayerModule().ONGOING_WINDOW_MINUTES) {
+      await notificationModule().firePrayerEffects(prayerKey, dayKey, config);
+    }
   }
 
   await setSchedulerState({ lastFiredKey: key });
@@ -187,6 +218,7 @@ if (typeof module !== "undefined" && module.exports) {
     PRAYER_ALARM_PREFIX,
     computeDays,
     formatBadge,
+    scheduledTimeForAlarm,
     reconcile,
     updateBadge,
     handleAlarm,

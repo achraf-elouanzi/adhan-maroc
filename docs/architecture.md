@@ -80,6 +80,26 @@ recalcule immédiatement l'état correct pour la suite — aucune notification
 tardive erronée n'est réémise pour une prière déjà passée depuis
 longtemps, et aucune prière n'est oubliée.
 
+Cas particulier : si le PC dort à travers plusieurs prières, Firefox
+relivre toutes les alarmes en retard d'un coup à la reprise. Pour éviter
+une rafale de notifications pour des prières manquées depuis longtemps,
+`handlePrayerAlarm` compare l'heure réelle de la prière à `Date.now()` :
+au-delà de `ONGOING_WINDOW_MINUTES` (15 min, la même fenêtre que l'état
+"en cours" — voir ci-dessous) de retard, la notification n'est pas
+affichée pour cette prière-là (l'état est quand même marqué comme traité
+pour ne jamais la redéclencher). Une prière manquée de peu (≤ 15 min)
+continue de notifier normalement.
+
+## État "en cours" après une prière (popup + badge)
+
+Une prière qui vient de sonner reste affichée comme "en cours" pendant
+`ONGOING_WINDOW_MINUTES` (15 min, `core/prayer.js#findDisplayState`)
+plutôt que de basculer instantanément sur le compte à rebours de la
+prière suivante — aussi bien dans le popup (carte + liste, couleur
+distincte) que dans le badge de la barre d'outils
+(`core/scheduler.js#updateBadge`, qui affiche alors le temps restant de
+cette fenêtre plutôt que le temps jusqu'à la prière suivante).
+
 ## Lecture de l'Adhan en arrière-plan (point technique le plus sensible)
 
 Un background script Firefox (event page, avec DOM) peut lire de l'audio

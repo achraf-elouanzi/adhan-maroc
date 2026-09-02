@@ -101,7 +101,21 @@ test("reconcile() supprime les anciennes alarmes avant d'en recréer (changement
   assert.equal(prayerAlarms.length, prayerCore.PRAYER_ORDER.length, "pas de doublons après un changement de ville");
 });
 
-test("handlePrayerAlarm : déclenche les effets une seule fois par prière/jour (pas de doublon après réveil tardif)", async () => {
+test("updateBadge() : pendant la fenêtre \"en cours\", affiche le temps restant de cette fenêtre (pas celui de la prochaine prière)", async () => {
+  const mock = freshBrowser();
+  await storage.setConfig({
+    location: { type: "city", cityId: "casablanca", name: "Casablanca", latitude: CASABLANCA.latitude, longitude: CASABLANCA.longitude, timezone: TIMEZONE },
+  });
+
+  const today = prayerCore.computeDay(CASABLANCA.latitude, CASABLANCA.longitude, JUNE_21, TIMEZONE);
+  const fixedNow = today.dhuhr.getTime() + 3 * 60 * 1000; // 3 min après Dhuhr, encore "en cours" (fenêtre de 15 min)
+
+  await withFixedNow(fixedNow, () => scheduler.updateBadge());
+
+  assert.equal(mock._debug.getBadgeText(), "12m", "doit refléter le temps restant de la fenêtre \"en cours\", pas le temps jusqu'à Asr");
+});
+
+test("handlePrayerAlarm : déclenche les effets une seule fois par prière/jour (pas de doublon)", async () => {
   const mock = freshBrowser();
   await storage.setConfig({
     notifications: true,
@@ -112,8 +126,8 @@ test("handlePrayerAlarm : déclenche les effets une seule fois par prière/jour 
   const today = prayerCore.computeDay(CASABLANCA.latitude, CASABLANCA.longitude, JUNE_21, TIMEZONE);
   const alarmName = `prayer:${today.dayKey}:dhuhr`;
 
-  // Simule un réveil tardif du PC : l'heure réelle est bien après Dhuhr.
-  const fixedNow = today.dhuhr.getTime() + 30 * 60 * 1000;
+  // Léger retard (dans la fenêtre "en cours"), l'alarme doit tout de même notifier.
+  const fixedNow = today.dhuhr.getTime() + 5 * 60 * 1000;
 
   await withFixedNow(fixedNow, () => scheduler.handleAlarm({ name: alarmName }));
   assert.equal(mock._debug.createdNotifications.length, 1);
@@ -121,6 +135,32 @@ test("handlePrayerAlarm : déclenche les effets une seule fois par prière/jour 
   // La même alarme se redéclenche (ex: Firefox la relivre) : ne doit pas renotifier.
   await withFixedNow(fixedNow, () => scheduler.handleAlarm({ name: alarmName }));
   assert.equal(mock._debug.createdNotifications.length, 1, "pas de notification en double");
+});
+
+test("handlePrayerAlarm : réveil tardif après veille prolongée -> pas de notification pour une prière manquée depuis longtemps", async () => {
+  const mock = freshBrowser();
+  await storage.setConfig({
+    notifications: true,
+    adhan: false,
+    location: { type: "city", cityId: "casablanca", name: "Casablanca", latitude: CASABLANCA.latitude, longitude: CASABLANCA.longitude, timezone: TIMEZONE },
+  });
+
+  const today = prayerCore.computeDay(CASABLANCA.latitude, CASABLANCA.longitude, JUNE_21, TIMEZONE);
+
+  // Le PC dort à travers Dhuhr ET Asr, et se réveille bien après les deux :
+  // Firefox relivre les deux alarmes en retard d'un coup à la reprise.
+  const fixedNow = today.asr.getTime() + 45 * 60 * 1000;
+
+  await withFixedNow(fixedNow, async () => {
+    await scheduler.handleAlarm({ name: `prayer:${today.dayKey}:dhuhr` });
+    await scheduler.handleAlarm({ name: `prayer:${today.dayKey}:asr` });
+  });
+
+  assert.equal(
+    mock._debug.createdNotifications.length,
+    0,
+    "aucune des deux prières manquées depuis plus de 15 minutes ne doit notifier"
+  );
 });
 
 test("handlePrayerAlarm : notifications désactivées -> aucune notification créée", async () => {
