@@ -137,15 +137,58 @@ champ manquant ou invalide en le remplaçant par sa valeur par défaut —
 l'extension ne peut donc pas se retrouver bloquée par une configuration
 inexistante ou corrompue (voir tests/storage.test.js).
 
-## Couche d'adaptation (portabilité Chromium future)
+## Portage Chrome/Edge
 
-`core/*.js` n'appelle que des API `browser.*` standard (alignées sur le
-namespace WebExtensions promise-based). Aucun fichier `core/` ne
-référence directement une particularité Firefox (event page vs service
-worker) : cette différence est confinée à `manifest.json` et
-`background/background.js`. Porter la logique métier vers Chromium ne
-demanderait donc, en première approximation, que d'adapter le manifest
-(service_worker) et d'ajouter un polyfill `browser` global si nécessaire.
+Un seul jeu de fichiers `core/`, `popup/`, `options/`, `onboarding/`,
+`shared/`, `data/`, `vendor/`, `audio/` et `background/background.js`
+est partagé entre les deux builds — voir `chromium/` pour ce qui est
+propre à Chrome/Edge, et `scripts/build-chromium.js` pour l'assemblage.
+Chrome et Edge utilisent le même moteur (Chromium) et acceptent le même
+paquet MV3 : un seul build sert les deux.
+
+**Ce qui diffère réellement entre Firefox et Chrome/Edge :**
+
+| | Firefox | Chrome/Edge |
+|---|---|---|
+| Background | `background.scripts` (event page, plusieurs fichiers, DOM disponible) | `background.service_worker` (un seul fichier, pas de DOM) |
+| Namespace API | `browser.*` natif (promesses) | `chrome.*` (callbacks) — le [polyfill Mozilla](https://github.com/mozilla/webextension-polyfill) (`vendor/webextension-polyfill.js`, no-op sur Firefox) fournit `browser.*` partout |
+| Icônes | SVG accepté | SVG **non supporté** (PNG obligatoire — `chromium/icons/*.png`, générées depuis `icons/icon.svg`) |
+| Lecture audio en arrière-plan | `Audio` directement dans l'event page (+ keepalive, voir plus haut) | Le service worker n'a **aucun DOM** : passe par un [document offscreen](https://developer.chrome.com/docs/extensions/reference/api/offscreen) (`chromium/offscreen.html`/`.js`, raison `AUDIO_PLAYBACK`, permission `offscreen`) piloté par messages |
+
+**Chargement du service worker (`chromium/background-entry.js`)** :
+Chrome n'accepte qu'un seul fichier pour `background.service_worker` —
+contrairement au tableau `background.scripts` de Firefox. `importScripts()`
+y recharge les mêmes fichiers `core/*.js`, dans le même ordre, dans le
+même scope global (`self`) : c'est exactement pour cette raison que
+chaque fichier `core/*.js` est enveloppé dans une IIFE (voir plus haut) —
+la même précaution contre les collisions de `const`/fonctions s'applique
+identiquement aux deux navigateurs. `background/background.js` lui-même
+est chargé en dernier, inchangé : il n'appelle que `browser.*` (fourni
+par le polyfill) et ne sait rien de la différence service worker / event
+page.
+
+**`core/notification.js` détecte l'environnement à l'exécution** :
+`typeof Audio !== "undefined"` → lecture directe (Firefox) ;
+sinon `chrome.offscreen` présent → document offscreen (Chrome/Edge). Le
+document offscreen n'a pas besoin du "keepalive" : contrairement à une
+event page Firefox, il n'est pas déchargé pour inactivité pendant la
+lecture. `chrome.notifications` ne supportant pas le SVG, l'icône de
+notification bascule aussi sur le PNG dans ce cas
+(`notificationIconUrl()`).
+
+**Build** : `node scripts/build-chromium.js` assemble `dist/chromium/`
+(dossiers partagés + `chromium/`), chargeable tel quel via
+"Charger l'extension non empaquetée". Script Node natif sans dépendance
+(copie de fichiers seulement) — aucun bundler.
+
+**Vérifié dans un vrai Edge** (via Chrome DevTools Protocol, service
+worker + popup + options + document offscreen) pendant le développement :
+service worker sans erreur, sélection de ville → horaires corrects dans
+le popup, pipeline Adhan → document offscreen créé et messagerie
+fonctionnelle. Un bug réel (chemin `chromium/offscreen.html` incorrect
+après l'assemblage — le dossier `chromium/` est fusionné à la racine du
+paquet, pas gardé comme sous-dossier) a été trouvé et corrigé grâce à
+cette vérification, avant d'être commité.
 
 ## Limite connue
 

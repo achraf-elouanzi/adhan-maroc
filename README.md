@@ -5,8 +5,8 @@
 <h1 align="center">Adhan Maroc</h1>
 
 <p align="center">
-  Les horaires de prière au Maroc, directement dans Firefox.<br/>
-  100% local, hors ligne, sans compte, sans tracking.
+  Les horaires de prière au Maroc, directement dans votre navigateur.<br/>
+  Firefox, Chrome, Edge — 100% local, hors ligne, sans compte, sans tracking.
 </p>
 
 ---
@@ -33,17 +33,29 @@ Permissions minimales : `alarms`, `notifications`, `storage`, et
 
 ## 🚀 Installation
 
-Aucune version signée n'est encore publiée sur addons.mozilla.org.
-Installation manuelle (mode développeur) :
+Aucune version n'est encore publiée sur les stores (addons.mozilla.org,
+Chrome Web Store, Microsoft Edge Add-ons). Installation manuelle :
 
-1. `about:debugging#/runtime/this-firefox` dans Firefox
+**Firefox**
+1. `about:debugging#/runtime/this-firefox`
 2. **Charger un module complémentaire temporaire**
-3. Sélectionner `manifest.json` dans ce dossier
+3. Sélectionner `manifest.json` à la racine de ce dossier
+
+**Chrome / Edge** (même paquet pour les deux, un seul build Chromium)
+1. `node scripts/build-chromium.js` (assemble `dist/chromium/`)
+2. `chrome://extensions` ou `edge://extensions`, activer le **mode développeur**
+3. **Charger l'extension non empaquetée** → sélectionner `dist/chromium/`
 
 ## 🛠️ Stack
 
-JavaScript vanilla, aucun framework, aucun build. Calcul astronomique via
-[Adhan JS](https://github.com/batoulapps/adhan-js) (vendoré localement).
+JavaScript vanilla, aucun framework, aucun bundler. Calcul astronomique
+via [Adhan JS](https://github.com/batoulapps/adhan-js) (vendoré
+localement). Un seul jeu de fichiers `core/`/`popup/`/`options/` partagé
+entre Firefox et Chromium (compatibilité via le
+[polyfill Mozilla](https://github.com/mozilla/webextension-polyfill)) —
+voir [docs/architecture.md](docs/architecture.md) pour le détail des
+différences (event page vs service worker, document offscreen pour
+l'Adhan côté Chrome/Edge).
 
 ## 📚 Documentation
 
